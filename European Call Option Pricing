@@ -1,0 +1,33 @@
+import numpy as np
+import scipy.stats as se
+
+St=50
+x=40
+T= 1
+R= .06
+sig= 0.25
+N= 100
+M= 100
+
+#defining Geometric Brownian Motion
+dt    = T/N
+det   = (R - 0.5*sig**2)*dt
+drift = sig*np.sqrt(dt)
+
+#sum of cashflows
+sumCF=0
+
+#Using MonteCarlo for generating the simulated price
+for i in range(M):
+  s=St
+
+  for j in range(N):
+    s = s*np.exp(det + np.random.normal()*drift)
+
+    d1= (np.log(s/x)+ T*((sig**2)/2)-R) /sig*np.sqrt(T)
+    d2= d1-(sig*np.sqrt(T))
+    callopt= s*se.norm.cdf(d1) - x*np.exp(-R*T) * se.norm.cdf(d2)
+
+    sumCF += callopt
+
+print("option price: $", sumCF/M/N)
